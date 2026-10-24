@@ -172,8 +172,9 @@ def rank_ic(score: pd.DataFrame, fwd: pd.DataFrame, min_names: int = 5) -> tuple
     ic = ic[cnt >= min_names].dropna()
     if len(ic) < 3:
         return None, None
-    t = ic.mean() / (ic.std(ddof=1) / math.sqrt(len(ic)))
-    return _clean(float(ic.mean())), _clean(float(t), 3)
+    sd = ic.std(ddof=1)
+    t = ic.mean() / (sd / math.sqrt(len(ic))) if sd > 0 else None
+    return _clean(float(ic.mean())), _clean(t, 3)
 
 
 def bootstrap_sharpe_ci(r: pd.Series, n_boot: int = 1000, block: int = 21, seed: int = 7) -> tuple[float, float]:
