@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { HBarChart } from "../components/charts";
 import { ChartCard, ErrorBox, FamilyDot, Loading, PageHeader, Sparkline, strategyMap, useMeta } from "../components/ui";
 import { useData } from "../lib/data";
 import { downloadCSV } from "../lib/exporters";
@@ -24,6 +25,8 @@ const COLS: Col[] = [
   { key: "exposure", label: "Exposure", fmt: (v) => pct(v, 0), higher: true, title: "Average share of capital invested" },
   { key: "turnover", label: "Turnover", fmt: (v) => (v == null ? "–" : `${v.toFixed(1)}x`), higher: false, title: "Traded value per year as a multiple of capital" },
 ];
+
+const PCT_KEYS: (keyof Metrics)[] = ["cagr", "max_dd", "vol", "hit_rate", "win_rate", "alpha", "exposure"];
 
 export default function LeaderboardPage() {
   const meta = useMeta();
@@ -56,6 +59,7 @@ export default function LeaderboardPage() {
 
   if (error) return <ErrorBox error={error} />;
   if (!lb || !meta) return <Loading />;
+  const col = COLS.find((c) => c.key === sortKey) ?? COLS[0];
 
   const exportCsv = () =>
     downloadCSV(`algolens_leaderboard_${f.period}_${f.cost}_${f.universe}.csv`, [
@@ -80,6 +84,23 @@ export default function LeaderboardPage() {
         </label>
         <span className="text-muted">{PERIOD_LABEL[f.period]} · {f.cost === "net" ? "net of Indian costs" : "gross, before costs"} · {sectorMode ? `${f.universe} stocks only` : `${meta.universe.length} stocks`}</span>
       </div>
+      <ChartCard
+        className="mb-4"
+        title={`Ranked by ${col.label}`}
+        meaning={`Bars follow the table order. ${col.higher ? "Higher is better" : "Lower is better"} for ${col.label.toLowerCase()}. Click a bar to open that strategy.`}
+      >
+        <HBarChart
+          unit={PCT_KEYS.includes(col.key) ? "pct" : "ratio"}
+          v1Label={col.label}
+          onClick={(id) => nav(`/strategy/${id}${qs}`)}
+          rows={rows.map((r) => ({
+            id: r.id,
+            label: S[r.id].name,
+            value: (r.m?.[col.key] as number | null | undefined) ?? null,
+            color: familyColor(S[r.id].family),
+          }))}
+        />
+      </ChartCard>
       <ChartCard
         title="All strategies"
         actions={<button className="chip hover:bg-[var(--surface-2)]" onClick={exportCsv}>CSV</button>}
