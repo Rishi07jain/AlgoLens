@@ -1,0 +1,17 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Node / build
+web/node_modules/
+web/dist/
+*.tsbuildinfo
+
+# Data: Yahoo + NSE raw CSVs are cached in the repo (PRD: protects against endpoint changes).
+# The Kaggle set is 52 MB and re-downloadable; processed Parquet is rebuilt by `make data`.
+data/raw/kaggle/
+data/processed/
+
+.DS_Store

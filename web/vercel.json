@@ -1,0 +1,4 @@
+{
+  "rewrites": [{ "source": "/((?!results/|assets/|favicon).*)", "destination": "/index.html" }],
+  "headers": [{ "source": "/results/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }] }]
+}
