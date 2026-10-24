@@ -95,6 +95,7 @@ export default function Layout() {
         <div className="max-w-[1280px] mx-auto px-4 py-4 flex flex-wrap gap-x-6 gap-y-1">
           <span><strong className="text-ink2">Educational project, not investment advice.</strong> Past backtested performance does not predict future results.</span>
           {meta && <span>Data {meta.start} to {meta.end} · NSE, Yahoo Finance, Kaggle · built {meta.generated_at.slice(0, 10)}</span>}
+          <a href="https://github.com/Rishi07jain/AlgoLens" className="underline hover:text-ink" target="_blank" rel="noreferrer">Source on GitHub</a>
         </div>
       </footer>
     </div>
